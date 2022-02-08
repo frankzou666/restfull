@@ -1,0 +1,14 @@
+INFO:root:app start...
+INFO:werkzeug: * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [07/Feb/2022 17:05:26] "[37mGET / HTTP/1.1[0m" 200 -
+INFO:root:app start...
+INFO:werkzeug: * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+INFO:root:C:\Users\Administrator\PycharmProjects\myapp from logging
+INFO:werkzeug:127.0.0.1 - - [07/Feb/2022 17:06:14] "[37mGET / HTTP/1.1[0m" 200 -
+INFO:root:app start...
+INFO:werkzeug: * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [07/Feb/2022 17:09:24] "[37mGET / HTTP/1.1[0m" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Feb/2022 17:09:27] "[37mGET / HTTP/1.1[0m" 200 -
+INFO:root:app start...
+INFO:werkzeug: * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [07/Feb/2022 17:10:12] "[37mGET / HTTP/1.1[0m" 200 -
