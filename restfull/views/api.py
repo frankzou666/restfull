@@ -4,7 +4,7 @@ import logging
 from restfull.models.t1 import T1
 import json
 
-apiview = Blueprint('apiview', __name__,url_prefix='/myapp/api')
+apiview = Blueprint('apiview', __name__,url_prefix='/myapp/apinothing')
 
 
 @apiview.route('/users',methods=['GET'])
@@ -29,8 +29,8 @@ def getUsersAll():
     return make_response(jsonify({'datetime': datetime.now(),'data':users}),httpcode)
 
 
-@apiview.route('/users/<id>',methods=['GET'])
-def getUsersByID(id):
+@apiview.route('/users/<userid>',methods=['GET'])
+def getUsersByID(userid):
     """
 
     :return:
@@ -39,7 +39,7 @@ def getUsersByID(id):
     users = []
     httpcode = 500
     try:
-        users = dbsession.query(T1).filter(T1.id == id).all()
+        users = dbsession.query(T1).filter(T1.id == userid).all()
         users = [user.toJson() for user in users]
         dbsession.execute('commit')
         httpcode = 200
@@ -49,6 +49,7 @@ def getUsersByID(id):
         logging.error(e.args)
 
     return make_response(jsonify({'datetime': datetime.now(),'data':users}),httpcode)
+
 
 @apiview.route('/users',methods=['POST'])
 def createUser():
@@ -61,7 +62,7 @@ def createUser():
     httpcode = 500
     try:
         user = T1()
-        user.username = request.get_json()['username']
+        user.username = request.get_json().get('username')
         dbsession.add(user)
         dbsession.execute('commit')
         dbsession.commit()
@@ -79,7 +80,7 @@ def createUser():
     return make_response(jsonify({'datetime': datetime.now(),'data':users}),httpcode)
 
 
-@apiview.route('/users',methods=['DELETE'])
+@apiview.route('/users', methods=['DELETE'])
 def deleteUser():
     """
      delete user from id
@@ -89,7 +90,7 @@ def deleteUser():
     users = []
     httpcode = 500
     try:
-        userid = request.get_json()['id']
+        userid = request.get_json().get('id')
         users = dbsession.query(T1).filter(T1.id==userid).all()
         if len(users) == 1:
             user = users[0]
@@ -102,6 +103,40 @@ def deleteUser():
             httpcode = 422
         dbsession.execute('commit')
         dbsession.commit()
+    except Exception as e:
+        dbsession.execute('rollback')
+        dbsession.rollback()
+        logging.error(e.args.__str__())
+        httpcode = 500
+
+    return make_response(jsonify({'datetime': datetime.now(),'data':users}),httpcode)
+
+
+@apiview.route('/users/<userid>',methods=['PUT'])
+def updateUser(userid):
+    """
+     update user by id(userid)
+    :return:
+    """
+    dbsession = current_app.config['dbsession']
+    users = []
+    httpcode = 500
+    try:
+        newuser = request.get_json()
+        users = dbsession.query(T1).filter(T1.id==userid).all()
+        if len(users) == 1:
+            user = users[0]
+            if newuser.get('username'):
+                user.username = newuser.get('username')
+            dbsession.add(user)
+            httpcode = 200
+        elif len(users) == 0:
+            httpcode = 422
+        else:
+            httpcode = 422
+        dbsession.execute('commit')
+        dbsession.commit()
+        users = [{"id": json.loads(user.toJson()).get('id')} for user in users]
     except Exception as e:
         dbsession.execute('rollback')
         dbsession.rollback()

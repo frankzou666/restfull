@@ -7,17 +7,32 @@ from sqlalchemy.orm import sessionmaker
 import logging
 from restfull.views.views import view
 from restfull.views.api import apiview
+from restfull.views.author import apiauthor
+from restfull.views.book import apibook
+from restfull.views.user import apiuser
 import os
 import pymysql
+import flask_monitoringdashboard as monitoringdashboard
+from flask_jwt_extended import JWTManager
+from datetime import timedelta
 
 
-#new app
+# new app
 app = Flask(__name__)
 app.config.from_object('config')
 app.config['APPDIR'] = os.getcwd()
+app.config['SECRET_KEY'] = 'the random string'
 
 
-#config logger
+# monitoringdashboard
+#monitoringdashboard.config.blueprint_name = '/monitor/dashboard'
+monitoringdashboard.bind(app=app)
+
+#jwt
+jwt = JWTManager(app)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=app.config['JWTSESSIONTIME'])
+
+# config logger
 if app.config['PROD']:
     logging.basicConfig(level=app.config['LOGLEVEL'],
                         format='%(levelname)s:%(asctime)s-%(filename)s-%(module)s-%(lineno)d:%(message)s',
@@ -26,8 +41,7 @@ else:
     logging.basicConfig(level=app.config['LOGLEVEL'],
                         format='%(levelname)s:%(asctime)s-%(filename)s-%(module)s-%(lineno)d:%(message)s'
                         )
-
-#create dbengine
+# create dbengine
 
 engine = create_engine( "mysql+pymysql://"+app.config['MYSQLUSER']+":" \
                        +app.config['MYSQLPWD']+"@"
@@ -40,9 +54,9 @@ engine = create_engine( "mysql+pymysql://"+app.config['MYSQLUSER']+":" \
 
 app.config['dbsession'] = sessionmaker(bind=engine)()
 
-
-
-#register buleprint
+# register blueprint
 app.register_blueprint(view)
 app.register_blueprint(apiview)
-
+app.register_blueprint(apiauthor)
+app.register_blueprint(apibook)
+app.register_blueprint(apiuser)

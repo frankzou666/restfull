@@ -1,8 +1,7 @@
 
-
-
 from restfull import app
 import logging
+
 
 def main():
     """
@@ -10,7 +9,7 @@ def main():
     :return:
     """
     logging.info('app start...')
-    app.run(host=app.config['LISTENHOST'])
+    app.run(host=app.config['LISTENHOST'], port=app.config['LISTENPORT'])
 
 
 if __name__ == '__main__':
